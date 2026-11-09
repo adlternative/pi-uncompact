@@ -34,28 +34,30 @@ pi -e git:github.com/adlternative/pi-context-recall
 安装后重启 Pi；若 Pi 正在运行，执行 `/reload`。
 不要使用 `--no-session`：召回依赖已保存的会话文件。
 
-## 测试模式：跳过摘要模型
+## 默认行为：跳过摘要模型
 
-在 Pi 设置中加入 `contextRecall.stubCompaction`，压缩不再调用模型，而写入一段固定占位说明，
-告诉模型如何用 CLI 读取已归档的原文。适用于供应商调用卡住、或只想验证召回时。
+本扩展默认把压缩的模型调用换成固定占位说明，告诉模型如何用 CLI 读取已归档的原文。
+只要设置文件里没有明确关闭，就按这个默认值走。
+
+想要回普通模型摘要，把开关设为 `false`：
 
 ```json
 {
   "contextRecall": {
-    "stubCompaction": true
+    "stubCompaction": false
   }
 }
 ```
 
 写入 `~/.pi/agent/settings.json`，或写入已授信项目的 `.pi/settings.json`。
-然后重启 Pi 或执行 `/reload`。只有布尔 `true` 生效，字符串 `"true"` 会被忽略。
+然后重启 Pi 或执行 `/reload`。只有布尔 `false` 会关闭；其他值维持默认。
 Pi 写设置时会保留这类自定义顶层键。
 
 - 切点仍由 Pi 决定（`firstKeptEntryId`），只替换摘要文本。
 - 不发起任何模型请求，检查点不报告 usage，瞬时完成。
 - 占位文本**不含**对话事实，也不含对话原文；下一轮模型没有摘要信息，必须自己调 CLI。
 - 归档前缀仍可读取，`overview` 会把该检查点作为一行显示。
-- 仅测试用途：不写该配置就不生效，也不会让正常压缩更便宜或更好。
+- 设为 `false` 可恢复普通模型摘要。占位文本只是指针，不含对话事实。
 
 ## 本地源码试用
 

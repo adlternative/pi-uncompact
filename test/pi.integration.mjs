@@ -296,9 +296,9 @@ test("stub compaction replaces the summarizer call and leaves originals retrieva
   const runner = new ExtensionRunner(loaded.extensions, loaded.runtime, root, sm, {});
   runner.bindCore({ getSettings: () => settings }, {}, {});
 
-  assert.equal(await runner.emit(event), undefined, "Stub mode must be opt-in");
-  settings = { contextRecall: { stubCompaction: "true" } };
-  assert.equal(await runner.emit(event), undefined, "Only a boolean true may enable it");
+  assert.equal((await runner.emit(event)).compaction.tokensBefore, 12345, "Stub is the default");
+  settings = { contextRecall: { stubCompaction: false } };
+  assert.equal(await runner.emit(event), undefined, "Explicit false restores model summaries");
 
   settings = { contextRecall: { stubCompaction: true } };
   const result = await runner.emit(event);

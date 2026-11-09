@@ -36,32 +36,33 @@ pi -e git:github.com/adlternative/pi-context-recall
 Restart Pi, or run `/reload` if the package was installed while Pi was running.
 Do not use `--no-session`: recall needs a saved session file.
 
-## Test mode: skip the summarizer
+## Default: skip the summarizer
 
-Adding `contextRecall.stubCompaction` to the Pi settings replaces the compaction
-model call with a fixed placeholder that tells the model how to read the archived
-originals. Useful when a provider call hangs and you want to keep working, or to
-test recall without paying for a summary.
+This extension replaces the compaction model call with a fixed placeholder that
+tells the model how to read the archived originals. That is the default, on any
+settings file that does not say otherwise.
+
+To get ordinary model summaries back, set the flag to `false`:
 
 ```json
 {
   "contextRecall": {
-    "stubCompaction": true
+    "stubCompaction": false
   }
 }
 ```
 
 Put it in `~/.pi/agent/settings.json`, or in a project `.pi/settings.json` while the
-project is trusted. Then restart Pi or run `/reload`. Only a boolean `true` enables
-it; `"true"` as a string is ignored. Unknown top-level keys are preserved by Pi.
+project is trusted. Then restart Pi or run `/reload`. Only a boolean `false`
+disables it; other values keep the default. Unknown top-level keys are preserved by Pi.
 
 - Pi still picks the cut point (`firstKeptEntryId`); only the summary text is replaced.
 - No model request is made, so the checkpoint reports no usage and finishes instantly.
 - The placeholder contains **no facts** about the conversation, and no conversation
   text. The next model turn starts without a summary and must call the CLI.
 - The archived prefix is still readable, and `overview` shows the checkpoint row.
-- This is a test aid: it is off unless the setting is present, and it does not make
-  ordinary compaction summaries better or cheaper in normal use.
+- Set `false` to get ordinary model summaries back. The placeholder is a pointer, not
+  a summary: it carries no conversation facts.
 
 ## Try the source locally
 
@@ -211,7 +212,7 @@ PI_PACKAGE_DIR=/path/to/installed/pi-coding-agent \
   PI_PROVIDER=your-provider PI_MODEL=your-model npm run test:live
 ```
 
-The opt-in live test uses configured credentials and synthetic data only. It makes
+The live test uses configured credentials and synthetic data only. It makes
 real model requests, compacts a saved session, reopens it, then verifies recall
 through the Skill and built-in read/bash tools. Reports stay in a temporary directory.
 
