@@ -1,6 +1,6 @@
 {
   "name": "pi-context-recall",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Recall original current-branch messages via a local CLI, Skill and tool-free Pi context bridge",
   "type": "module",
   "license": "MIT",
