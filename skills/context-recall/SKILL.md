@@ -34,13 +34,13 @@ Pick the entry point by what the user actually asked:
    user instead of echoing raw JSON; it is several times larger than the same facts.
 
 ```bash
-node "/absolute/path/to/pi-context-recall/recall.mjs" overview --tail
-node "/absolute/path/to/pi-context-recall/recall.mjs" overview
-node "/absolute/path/to/pi-context-recall/recall.mjs" overview --compaction-id CHECKPOINT_ID --limit 5
-node "/absolute/path/to/pi-context-recall/recall.mjs" search --query "PostgreSQL" --limit 10
-node "/absolute/path/to/pi-context-recall/recall.mjs" read --entry-id ENTRY_ID --offset 0 --limit 4000
-node "/absolute/path/to/pi-context-recall/recall.mjs" compactions
-node "/absolute/path/to/pi-context-recall/recall.mjs" search --compaction-id CHECKPOINT_ID --query "PostgreSQL"
+node "/absolute/path/to/pi-uncompact/recall.mjs" overview --tail
+node "/absolute/path/to/pi-uncompact/recall.mjs" overview
+node "/absolute/path/to/pi-uncompact/recall.mjs" overview --compaction-id CHECKPOINT_ID --limit 5
+node "/absolute/path/to/pi-uncompact/recall.mjs" search --query "PostgreSQL" --limit 10
+node "/absolute/path/to/pi-uncompact/recall.mjs" read --entry-id ENTRY_ID --offset 0 --limit 4000
+node "/absolute/path/to/pi-uncompact/recall.mjs" compactions
+node "/absolute/path/to/pi-uncompact/recall.mjs" search --compaction-id CHECKPOINT_ID --query "PostgreSQL"
 ```
 
 - `overview`: chronological pages, default 5 rows, maximum 10. Each row has an ID and

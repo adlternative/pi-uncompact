@@ -6,11 +6,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adlternative/pi-context-recall.git"
+    "url": "git+https://github.com/adlternative/pi-uncompact.git"
   },
-  "homepage": "https://github.com/adlternative/pi-context-recall#readme",
+  "homepage": "https://github.com/adlternative/pi-uncompact#readme",
   "bugs": {
-    "url": "https://github.com/adlternative/pi-context-recall/issues"
+    "url": "https://github.com/adlternative/pi-uncompact/issues"
   },
   "keywords": [
     "pi-package",

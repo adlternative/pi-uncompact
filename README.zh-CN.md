@@ -15,7 +15,7 @@ CLI 检索 Pi 已保存的原文，Skill 教 agent 通过已有 `bash` 使用，
 从本仓库安装：
 
 ```bash
-pi install git:github.com/adlternative/pi-context-recall
+pi install git:github.com/adlternative/pi-uncompact
 ```
 
 会写入个人设置 `~/.pi/agent/settings.json`，同时安装扩展和内置 Skill。
@@ -29,13 +29,13 @@ pi install npm:pi-uncompact
 
 ```bash
 pi list     # 确认包和本地检出路径
-pi remove git:github.com/adlternative/pi-context-recall
+pi remove git:github.com/adlternative/pi-uncompact
 ```
 
 只想试用一次、不写设置：
 
 ```bash
-pi -e git:github.com/adlternative/pi-context-recall
+pi -e git:github.com/adlternative/pi-uncompact
 ```
 
 安装后重启 Pi；若 Pi 正在运行，执行 `/reload`。
@@ -127,13 +127,13 @@ Skill 自动触发不是硬保证。完整说明按需加载，不再让三个�
 普通终端可以运行 `node recall.mjs --help`；查询需要薄扩展注入的上下文。
 
 ```bash
-node "/path/to/pi-context-recall/recall.mjs" overview --tail
-node "/path/to/pi-context-recall/recall.mjs" overview
-node "/path/to/pi-context-recall/recall.mjs" overview --compaction-id CHECKPOINT_ID
-node "/path/to/pi-context-recall/recall.mjs" search --query "PostgreSQL" --limit 10
-node "/path/to/pi-context-recall/recall.mjs" read --entry-id ENTRY_ID --offset 0 --limit 4000
-node "/path/to/pi-context-recall/recall.mjs" compactions
-node "/path/to/pi-context-recall/recall.mjs" search --compaction-id CHECKPOINT_ID --query "PostgreSQL"
+node "/path/to/pi-uncompact/recall.mjs" overview --tail
+node "/path/to/pi-uncompact/recall.mjs" overview
+node "/path/to/pi-uncompact/recall.mjs" overview --compaction-id CHECKPOINT_ID
+node "/path/to/pi-uncompact/recall.mjs" search --query "PostgreSQL" --limit 10
+node "/path/to/pi-uncompact/recall.mjs" read --entry-id ENTRY_ID --offset 0 --limit 4000
+node "/path/to/pi-uncompact/recall.mjs" compactions
+node "/path/to/pi-uncompact/recall.mjs" search --compaction-id CHECKPOINT_ID --query "PostgreSQL"
 ```
 
 | 子命令 | 参数 |
