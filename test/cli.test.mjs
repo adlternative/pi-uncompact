@@ -34,7 +34,7 @@ function fixture(t) {
   const save = (records = entries, first = header) => writeFileSync(file, [first, ...records].map((e) => JSON.stringify(e)).join("\n") + "\n");
   save();
   const run = (args, env = {}) => spawnSync(process.execPath, [cli, ...args], {
-    env: { ...process.env, PI_CONTEXT_RECALL_SESSION: file, PI_CONTEXT_RECALL_LEAF: "cp2", ...env },
+    env: { ...process.env, PI_SESSION_FILE: file, PI_CONTEXT_RECALL_LEAF: "cp2", ...env },
     encoding: "utf8", timeout: 10000,
   });
   const call = (args, env) => {
@@ -109,12 +109,12 @@ test("CLI rejects unknown, duplicate, cross-command and unbounded parameters", (
 
 test("CLI never guesses context and handles explicit empty branches", (t) => {
   const { error, call, run } = fixture(t);
-  assert.match(error(["search"], { PI_CONTEXT_RECALL_SESSION: "" }), /Missing current-session context/);
+  assert.match(error(["search"], { PI_SESSION_FILE: "" }), /Missing current-session context/);
   assert.match(error(["search"], { PI_CONTEXT_RECALL_LEAF: undefined }), /Missing current-session context/);
   assert.match(error(["search"], { PI_CONTEXT_RECALL_LEAF: "missing" }), /missing or cyclic/);
   assert.deepEqual(call(["search"], { PI_CONTEXT_RECALL_LEAF: "" }).messages, []);
   for (const args of [[], ["--help"], ["-h"], ["search", "--help"]]) {
-    const result = run(args, { PI_CONTEXT_RECALL_SESSION: "", PI_CONTEXT_RECALL_LEAF: undefined });
+    const result = run(args, { PI_SESSION_FILE: "", PI_CONTEXT_RECALL_LEAF: undefined });
     assert.equal(result.status, 0, result.stderr);
     assert.match(result.stdout, /Usage:/);
   }
@@ -147,8 +147,8 @@ test("CLI handles CRLF, blank lines and missing final newline without changing s
   writeFileSync(file, "\r\n" + original);
   assert.equal(call(["compactions"]).total, 2);
   assert.equal(readFileSync(file, "utf8"), "\r\n" + original);
-  assert.match(error(["search"], { PI_CONTEXT_RECALL_SESSION: file + ".missing" }), /ENOENT/);
-  assert.match(error(["search"], { PI_CONTEXT_RECALL_LEAF: undefined, PI_SESSION_FILE: file }), /Missing current-session context/);
+  assert.match(error(["search"], { PI_SESSION_FILE: file + ".missing" }), /ENOENT/);
+  assert.match(error(["search"], { PI_SESSION_FILE: undefined }), /Missing current-session context/);
 });
 
 test("CLI accepts escaped and option-like literal queries; full text never exposes private blocks", (t) => {

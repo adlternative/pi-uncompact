@@ -84,10 +84,10 @@ node "/absolute/path/to/pi-uncompact/recall.mjs" search --compaction-id CHECKPOI
 - Results are JSON, so further projection with `jq` is possible. Do not page a raw
   JSONL yourself or dump whole histories just to filter them.
 
-The thin extension injects the current saved session file and leaf into each bash
-invocation. **Never set/override** `PI_CONTEXT_RECALL_SESSION` or
-`PI_CONTEXT_RECALL_LEAF`, guess the most recent file, follow `parentSession` or
-scan sibling branches/other sessions. If context is missing, report it rather than
+The thin extension injects the current branch leaf into each bash invocation; the
+saved session file comes from Pi's own `PI_SESSION_FILE`. **Never set/override**
+`PI_SESSION_FILE` or `PI_CONTEXT_RECALL_LEAF`, guess the most recent file, follow
+`parentSession` or scan sibling branches/other sessions. If context is missing, report it rather than
 falling back. This bridge requires local bash; it does not support in-memory-only
 sessions, remote shells, PowerShell, or terminal `!` commands.
 

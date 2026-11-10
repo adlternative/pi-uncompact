@@ -154,10 +154,10 @@ test("reopen and /fork follow current file, preserve originals and remap label c
 test("bridge shell-quotes context, keeps existing command exit semantics and ignores other tools", async (t) => {
   const { sm } = fixture(t);
   sm.appendMessage(user("file path contains spaces and quotes"));
-  const snapshot = { file: process.env.PI_CONTEXT_RECALL_SESSION, leaf: process.env.PI_CONTEXT_RECALL_LEAF };
-  const result = await bash(sm, "node -e 'console.log(JSON.stringify([process.env.PI_CONTEXT_RECALL_SESSION,process.env.PI_CONTEXT_RECALL_LEAF]))'");
+  const snapshot = process.env.PI_CONTEXT_RECALL_LEAF;
+  const result = await bash(sm, "node -e 'console.log(JSON.stringify([process.env.PI_SESSION_FILE,process.env.PI_CONTEXT_RECALL_LEAF]))'");
   assert.deepEqual(JSON.parse(result.content[0].text), [sm.getSessionFile(), sm.getLeafId()]);
-  assert.deepEqual({ file: process.env.PI_CONTEXT_RECALL_SESSION, leaf: process.env.PI_CONTEXT_RECALL_LEAF }, snapshot);
+  assert.equal(process.env.PI_CONTEXT_RECALL_LEAF, snapshot);
   assert.equal((await bash(sm, "exit 7")).isError, true);
   const runner = new ExtensionRunner(loaded.extensions, loaded.runtime, root, sm, {});
   const input = { path: "untouched" };
@@ -172,7 +172,7 @@ test("same loaded runner tracks /tree and /fork without cached file or leaf", as
   sm.branch(shared);
   const right = sm.appendMessage(assistant("right"));
   const runner = new ExtensionRunner(loaded.extensions, loaded.runtime, root, sm, {});
-  const command = "node -e 'console.log(JSON.stringify([process.env.PI_CONTEXT_RECALL_SESSION,process.env.PI_CONTEXT_RECALL_LEAF]))'";
+  const command = "node -e 'console.log(JSON.stringify([process.env.PI_SESSION_FILE,process.env.PI_CONTEXT_RECALL_LEAF]))'";
   const check = async (file, leaf) => {
     const result = await bash(sm, command, runner);
     assert.ok(!result.isError);
@@ -194,7 +194,7 @@ test("concurrent prepared calls keep separate branch snapshots and do not mutate
   sm.branch(shared);
   const right = sm.appendMessage(assistant("right"));
   const runner = new ExtensionRunner(loaded.extensions, loaded.runtime, root, sm, {});
-  const envBefore = [process.env.PI_CONTEXT_RECALL_SESSION, process.env.PI_CONTEXT_RECALL_LEAF];
+  const envBefore = process.env.PI_CONTEXT_RECALL_LEAF;
   const inputs = [];
   for (const leaf of [left, right]) {
     sm.branch(leaf);
@@ -211,7 +211,7 @@ test("concurrent prepared calls keep separate branch snapshots and do not mutate
   assert.deepEqual(JSON.parse(results[0].content[0].text).messages.map((e) => e.id), [shared, left]);
   assert.deepEqual(JSON.parse(results[1].content[0].text).messages.map((e) => e.id), [shared, right]);
   assert.deepEqual(results[2].messages.map((e) => e.id), [otherId]);
-  assert.deepEqual([process.env.PI_CONTEXT_RECALL_SESSION, process.env.PI_CONTEXT_RECALL_LEAF], envBefore);
+  assert.equal(process.env.PI_CONTEXT_RECALL_LEAF, envBefore);
 });
 
 test("reload keeps one hook and no tools; unusual shell characters are values, never executable syntax", async (t) => {
@@ -224,7 +224,7 @@ test("reload keeps one hook and no tools; unusual shell characters are values, n
   const leaf = "'; printf SHOULD_NOT_EXECUTE; #";
   const manager = { getSessionFile: () => file, getLeafId: () => leaf, getSessionId: () => "shell-quoting-test" };
   const runner = new ExtensionRunner(again.extensions, again.runtime, root, manager, {});
-  const result = await bash(manager, "node -e 'console.log(JSON.stringify([process.env.PI_CONTEXT_RECALL_SESSION,process.env.PI_CONTEXT_RECALL_LEAF]))'", runner);
+  const result = await bash(manager, "node -e 'console.log(JSON.stringify([process.env.PI_SESSION_FILE,process.env.PI_CONTEXT_RECALL_LEAF]))'", runner);
   assert.deepEqual(JSON.parse(result.content[0].text), [file, leaf]);
   const handlers = again.extensions[0].handlers.get("tool_call");
   assert.equal(handlers.length, 1);

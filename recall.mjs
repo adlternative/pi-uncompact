@@ -60,7 +60,8 @@ function parameters(argv) {
 }
 
 function currentBranch() {
-  const file = process.env.PI_CONTEXT_RECALL_SESSION;
+  // Pi's bash tool exports the session file itself; only the leaf comes from the extension.
+  const file = process.env.PI_SESSION_FILE;
   const leaf = process.env.PI_CONTEXT_RECALL_LEAF;
   if (!file || leaf === undefined) {
     throw new Error("Missing current-session context. Run through Pi's bash tool with the context-recall extension and a saved session.");

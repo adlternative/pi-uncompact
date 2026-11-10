@@ -179,11 +179,11 @@ The old `session_compactions`, `session_messages`, `session_read` and
 
 ## Scope and implementation
 
-On every agent `bash` call, `index.ts` reads the **current** SessionManager file
-and leaf, shell-quotes them, and prepends exports for
-`PI_CONTEXT_RECALL_SESSION` and `PI_CONTEXT_RECALL_LEAF`. This is invocation-local:
-it does not change Pi's process environment or create context snapshot files.
-It does prepend exports to all agent bash commands; later tool-call hooks see them.
+On every agent `bash` call, `index.ts` reads the **current** branch leaf, shell-quotes it
+and prepends one export, `PI_CONTEXT_RECALL_LEAF`. The session file is not injected:
+Pi already exports `PI_SESSION_FILE` for bash. This is invocation-local — it does not
+change Pi's process environment or create context snapshot files — but it does
+prepend the export to every agent bash command, and later tool-call hooks see it.
 
 The CLI opens that JSONL read-only and follows `parentId` from the injected leaf.
 It never selects the newest file, assumes the last line is the active leaf, follows

@@ -30,12 +30,10 @@ export function stubRequested(settings: unknown): boolean {
 export default function (pi: ExtensionAPI) {
   pi.on("tool_call", (event, ctx) => {
     if (event.toolName !== "bash" || typeof event.input.command !== "string") return;
+    // Pi already exports PI_SESSION_FILE for bash; only the branch tip is missing.
     // Read live state per call: /tree can move the leaf without changing the session file.
-    const file = ctx.sessionManager.getSessionFile() ?? "";
     const leaf = ctx.sessionManager.getLeafId() ?? "";
-    event.input.command =
-      `export PI_CONTEXT_RECALL_SESSION=${quote(file)} PI_CONTEXT_RECALL_LEAF=${quote(leaf)};\n` +
-      event.input.command;
+    event.input.command = `export PI_CONTEXT_RECALL_LEAF=${quote(leaf)};\n` + event.input.command;
   });
 
   pi.on("session_before_compact", (event) => {

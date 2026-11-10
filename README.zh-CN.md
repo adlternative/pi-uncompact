@@ -173,11 +173,11 @@ node "/path/to/pi-uncompact/recall.mjs" search --compaction-id CHECKPOINT_ID --q
 
 ## 范围与原理
 
-每次 agent 调用 `bash`，`index.ts` 从当前 SessionManager 获取文件和 leaf，
-做 shell 引号转义，给命令前置导出
-`PI_CONTEXT_RECALL_SESSION`、`PI_CONTEXT_RECALL_LEAF`。
-变量仅属于该次命令，不修改 Pi 进程环境，也不产生上下文快照文件。
-所有 agent bash 命令都会多这段前缀，后续 tool-call 钩子也会看到它。
+每次 agent 调用 `bash`，`index.ts` 从当前 SessionManager 取分支 leaf，
+做 shell 引号转义后只前置导出 `PI_CONTEXT_RECALL_LEAF`。
+会话文件不再注入：Pi 本身就会给 bash 导出 `PI_SESSION_FILE`。
+变量仅属于该次命令，不修改 Pi 进程环境，也不产生上下文快照文件；
+但所有 agent bash 命令都会多这段前缀，后续 tool-call 钩子也会看到它。
 
 CLI 只读打开这个 JSONL，从指定 leaf 沿 `parentId` 回溯。
 不猜最新会话，不把最后一行当作当前分支，不跟随 `parentSession`；
