@@ -1,17 +1,44 @@
-import type { SessionEntry } from "@earendil-works/pi-coding-agent";
+/**
+ * Pure JavaScript on purpose: this file is imported by recall.mjs, and Node refuses to
+ * strip types for files under node_modules, which is where `pi install npm:` puts it.
+ *
+ * @typedef {import("@earendil-works/pi-coding-agent").SessionEntry} SessionEntry
+ * @typedef {{ type: string; text?: string; name?: string; arguments?: unknown; mimeType?: string }} ContentBlock
+ * @typedef {{ calls: number; results: number; errors: number }} ToolCounts
+ *
+ * @typedef {object} HistoryParams
+ * @property {"overview" | "compactions" | "messages" | "read"} action
+ * @property {string} [compactionId]
+ * @property {string} [entryId]
+ * @property {string} [untilId]
+ * @property {string} [query]
+ * @property {number} [offset]
+ * @property {boolean} [tail]
+ * @property {number} [limit]
+ *
+ * @typedef {ToolCounts & {
+ *   name: string;
+ * }} NamedToolCounts
+ *
+ * @typedef {object} OverviewRow
+ * @property {string} id
+ * @property {string} timestamp
+ * @property {string} role
+ * @property {string} [preview]
+ * @property {boolean} [truncated]
+ * @property {ToolCounts & {
+ *   firstEntryId: string; lastEntryId: string; offset: number;
+ *   firstErrorEntryId: string | null; byName: NamedToolCounts[]; other: ToolCounts;
+ * }} [tools]
+ */
 
-export interface HistoryParams {
-  action: "overview" | "compactions" | "messages" | "read";
-  compactionId?: string;
-  entryId?: string;
-  untilId?: string;
-  query?: string;
-  offset?: number;
-  tail?: boolean;
-  limit?: number;
-}
-
-function pageNumber(value: number | undefined, fallback: number, min: number, max: number): number {
+/**
+ * @param {number | undefined} value
+ * @param {number} fallback
+ * @param {number} min
+ * @param {number} max
+ */
+function pageNumber(value, fallback, min, max) {
   const n = value ?? fallback;
   if (!Number.isSafeInteger(n) || n < min || n > max) {
     throw new Error(`Expected an integer between ${min} and ${max}.`);
@@ -19,10 +46,11 @@ function pageNumber(value: number | undefined, fallback: number, min: number, ma
   return n;
 }
 
-// Never serialize entire entries: they contain binary data, signatures and private extension state.
-function contentText(content: string | readonly {
-  type: string; text?: string; name?: string; arguments?: unknown; mimeType?: string;
-}[]): string {
+/**
+ * Never serialize entire entries: they contain binary data, signatures and private extension state.
+ * @param {string | readonly ContentBlock[]} content
+ */
+function contentText(content) {
   if (typeof content === "string") return content;
   return content.map((block) => {
     switch (block.type) {
@@ -35,7 +63,11 @@ function contentText(content: string | readonly {
   }).join("\n");
 }
 
-function transcript(entry: SessionEntry): { role: string; text: string } | undefined {
+/**
+ * @param {SessionEntry} entry
+ * @returns {{ role: string; text: string } | undefined}
+ */
+function transcript(entry) {
   if (entry.type === "compaction" || entry.type === "branch_summary") {
     return { role: entry.type, text: entry.summary };
   }
@@ -57,7 +89,11 @@ function transcript(entry: SessionEntry): { role: string; text: string } | undef
   }
 }
 
-function archivedPrefix(branch: readonly SessionEntry[], compactionId: string): readonly SessionEntry[] {
+/**
+ * @param {readonly SessionEntry[]} branch
+ * @param {string} compactionId
+ */
+function archivedPrefix(branch, compactionId) {
   const index = branch.findIndex((e) => e.id === compactionId && e.type === "compaction");
   if (index < 0) throw new Error("Compaction not found on the current branch.");
   const compaction = branch[index];
@@ -70,7 +106,8 @@ function archivedPrefix(branch: readonly SessionEntry[], compactionId: string): 
   return branch.slice(0, keptIndex);
 }
 
-function checkpointInfo(entry: Extract<SessionEntry, { type: "compaction" }>) {
+/** @param {Extract<SessionEntry, { type: "compaction" }>} entry */
+function checkpointInfo(entry) {
   return {
     id: entry.id, timestamp: entry.timestamp, firstKeptEntryId: entry.firstKeptEntryId,
     tokensBefore: entry.tokensBefore, summaryPreview: entry.summary.slice(0, 300),
@@ -78,24 +115,25 @@ function checkpointInfo(entry: Extract<SessionEntry, { type: "compaction" }>) {
   };
 }
 
-type ToolCounts = { calls: number; results: number; errors: number };
-type OverviewRow = {
-  id: string; timestamp: string; role: string;
-  preview?: string; truncated?: boolean;
-  tools?: ToolCounts & {
-    firstEntryId: string; lastEntryId: string; offset: number; firstErrorEntryId: string | null;
-    byName: (ToolCounts & { name: string })[]; other: ToolCounts;
-  };
-};
-
-// Never split a surrogate pair in a preview; a lone half renders as a broken glyph.
-function clip(text: string, length: number): string {
+/**
+ * Never split a surrogate pair in a preview; a lone half renders as a broken glyph.
+ * @param {string} text
+ * @param {number} length
+ */
+function clip(text, length) {
   const cut = text.slice(0, length);
   return /[\uD800-\uDBFF]$/.test(cut) ? cut.slice(0, -1) : cut;
 }
 
-function overview(entries: readonly SessionEntry[], offset: number, limit: number, tail = false) {
-  const messages: OverviewRow[] = [];
+/**
+ * @param {readonly SessionEntry[]} entries
+ * @param {number} offset
+ * @param {number} limit
+ * @param {boolean} [tail]
+ */
+function overview(entries, offset, limit, tail = false) {
+  /** @type {OverviewRow[]} */
+  const messages = [];
   const cap = tail ? Infinity : limit;
   let cursor = tail ? 0 : Math.min(offset, entries.length);
   for (; cursor < entries.length; cursor++) {
@@ -116,7 +154,8 @@ function overview(entries: readonly SessionEntry[], offset: number, limit: numbe
     }
     if (entry.type !== "message") continue;
     const m = entry.message;
-    const events: (ToolCounts & { name: string })[] = [];
+    /** @type {NamedToolCounts[]} */
+    const events = [];
     if (m.role === "user" || m.role === "assistant" || m.role === "custom") {
       const text = typeof m.content === "string" ? m.content
         : contentText(m.content.filter((block) => block.type === "text" || block.type === "image"));
@@ -155,14 +194,15 @@ function overview(entries: readonly SessionEntry[], offset: number, limit: numbe
     };
     tools.lastEntryId = entry.id;
     for (const event of events) {
-      let counts: ToolCounts | undefined = tools.byName.find((item) => item.name === event.name);
+      /** @type {ToolCounts | undefined} */
+      let counts = tools.byName.find((item) => item.name === event.name);
       if (!counts && tools.byName.length < 5) {
         const named = { name: event.name, calls: 0, results: 0, errors: 0 };
         tools.byName.push(named);
         counts = named;
       }
       counts ??= tools.other;
-      for (const key of ["calls", "results", "errors"] as const) {
+      for (const key of /** @type {const} */ (["calls", "results", "errors"])) {
         tools[key] += event[key];
         counts[key] += event[key];
       }
@@ -176,16 +216,25 @@ function overview(entries: readonly SessionEntry[], offset: number, limit: numbe
   return { messages, nextOffset: cursor < entries.length ? cursor : null };
 }
 
-// Newest page first: offset counts rows back from the end, not raw entries.
-function tailPage(rows: readonly OverviewRow[], offset: number, limit: number) {
+/**
+ * Newest page first: offset counts rows back from the end, not raw entries.
+ * @param {readonly OverviewRow[]} rows
+ * @param {number} offset
+ * @param {number} limit
+ */
+function tailPage(rows, offset, limit) {
   const end = Math.max(0, rows.length - offset);
   const start = Math.max(0, end - limit);
   const messages = rows.slice(start, end);
   return { messages, nextOffset: start > 0 ? offset + messages.length : null };
 }
 
-/** Raw persisted transcript, never a reconstruction of provider-hook transformations. */
-export function queryHistory(branch: readonly SessionEntry[], params: HistoryParams) {
+/**
+ * Raw persisted transcript, never a reconstruction of provider-hook transformations.
+ * @param {readonly SessionEntry[]} branch
+ * @param {HistoryParams} params
+ */
+export function queryHistory(branch, params) {
   const offset = pageNumber(params.offset, 0, 0, Number.MAX_SAFE_INTEGER);
   if (params.tail && params.action !== "overview") throw new Error("tail is only supported by overview.");
   if (params.untilId) {
@@ -236,6 +285,7 @@ export function queryHistory(branch: readonly SessionEntry[], params: HistoryPar
     const pattern = params.query === undefined ? undefined
       : new RegExp(params.query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "iu");
     // shortcut: linear scan; add an index only if large sessions make recall slow.
+    /** @type {any[]} */
     const messages = [];
     let cursor = Math.min(offset, entries.length);
     for (; cursor < entries.length && messages.length < limit; cursor++) {

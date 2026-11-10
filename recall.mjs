@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
-import { queryHistory } from "./history.ts";
+import { queryHistory } from "./history.mjs";
 
 const usage = `Usage: node recall.mjs <command> [options]
   overview     [--compaction-id ID] [--tail] [--until-id ID] [--offset N] [--limit N]

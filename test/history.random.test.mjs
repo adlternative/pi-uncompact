@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { queryHistory } from "../history.ts";
+import { queryHistory } from "../history.mjs";
 
 const timestamp = "2026-01-01T00:00:00.000Z";
 let seed = 0x5eed1234;

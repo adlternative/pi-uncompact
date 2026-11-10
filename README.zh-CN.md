@@ -11,7 +11,8 @@ CLI 检索 Pi 已保存的原文，Skill 教 agent 通过已有 `bash` 使用，
 ## 安装
 
 需要 Pi、**Node.js ≥22.19.0**、本地 bash 和已保存的 Pi v3 会话。
-包尚未发布到 npm，从本仓库安装：
+
+从本仓库安装：
 
 ```bash
 pi install git:github.com/adlternative/pi-context-recall

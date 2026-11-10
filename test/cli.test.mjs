@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { queryHistory } from "../history.ts";
+import { queryHistory } from "../history.mjs";
 import test from "node:test";
 
 const cli = fileURLToPath(new URL("../recall.mjs", import.meta.url));

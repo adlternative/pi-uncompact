@@ -12,7 +12,6 @@ It does not reverse summaries or replace Pi's compaction.
 ## Install
 
 Requires Pi, **Node.js ≥22.19.0**, local bash and a saved Pi v3 session.
-The package is not on npm; install it from this repository.
 
 ```bash
 pi install git:github.com/adlternative/pi-context-recall
