@@ -1,4 +1,4 @@
-# pi-context-recall · 上下文找回
+# pi-uncompact · 上下文找回
 
 [English](README.md) | 简体中文
 
@@ -21,10 +21,10 @@ pi install git:github.com/adlternative/pi-context-recall
 会写入个人设置 `~/.pi/agent/settings.json`，同时安装扩展和内置 Skill。
 加 `--local` 则写入本项目的 `.pi/settings.json`；Pi 在授予项目信任后才加载项目声明。
 
-从 npm 安装（公开源）：
+从 npm 安装（公开源）。包已由 `pi-context-recall` 改名，旧名已废弃：
 
 ```bash
-pi install npm:pi-context-recall
+pi install npm:pi-uncompact
 ```
 
 ```bash

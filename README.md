@@ -1,4 +1,4 @@
-# pi-context-recall
+# pi-uncompact
 
 English | [简体中文](README.zh-CN.md)
 
@@ -21,10 +21,10 @@ This writes a personal declaration to `~/.pi/agent/settings.json` and installs t
 extension **and** the bundled Skill. Add `--local` to write `.pi/settings.json`
 for this project instead; Pi loads project declarations after project trust.
 
-From npm (public registry):
+From npm (public registry). The package was renamed from `pi-context-recall`, which is deprecated:
 
 ```bash
-pi install npm:pi-context-recall
+pi install npm:pi-uncompact
 ```
 
 ```bash
