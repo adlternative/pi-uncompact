@@ -3,13 +3,35 @@
   "version": "0.1.0",
   "description": "Recall original current-branch messages via a local CLI, Skill and tool-free Pi context bridge",
   "type": "module",
-  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adlternative/pi-context-recall.git"
+  },
+  "homepage": "https://github.com/adlternative/pi-context-recall#readme",
+  "bugs": {
+    "url": "https://github.com/adlternative/pi-context-recall/issues"
+  },
   "keywords": [
-    "pi-package"
+    "pi-package",
+    "pi",
+    "context",
+    "compaction",
+    "recall"
   ],
   "engines": {
     "node": ">=22.19.0"
   },
+  "files": [
+    "index.ts",
+    "history.ts",
+    "recall.mjs",
+    "skills",
+    "README.md",
+    "README.zh-CN.md",
+    "TESTING.md",
+    "LICENSE"
+  ],
   "pi": {
     "extensions": [
       "./index.ts"
@@ -20,6 +42,15 @@
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*"
+  },
+  "peerDependenciesMeta": {
+    "@earendil-works/pi-coding-agent": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   },
   "scripts": {
     "test": "node --test test/*.test.mjs",

@@ -20,6 +20,12 @@ pi install git:github.com/adlternative/pi-context-recall
 会写入个人设置 `~/.pi/agent/settings.json`，同时安装扩展和内置 Skill。
 加 `--local` 则写入本项目的 `.pi/settings.json`；Pi 在授予项目信任后才加载项目声明。
 
+从 npm 安装（公开源）：
+
+```bash
+pi install npm:pi-context-recall
+```
+
 ```bash
 pi list     # 确认包和本地检出路径
 pi remove git:github.com/adlternative/pi-context-recall

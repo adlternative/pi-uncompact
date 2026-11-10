@@ -22,6 +22,12 @@ This writes a personal declaration to `~/.pi/agent/settings.json` and installs t
 extension **and** the bundled Skill. Add `--local` to write `.pi/settings.json`
 for this project instead; Pi loads project declarations after project trust.
 
+From npm (public registry):
+
+```bash
+pi install npm:pi-context-recall
+```
+
 ```bash
 pi list     # confirm the package and its checkout path
 pi remove git:github.com/adlternative/pi-context-recall
